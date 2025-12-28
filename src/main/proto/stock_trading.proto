@@ -6,7 +6,17 @@ option java_outer_classname = "StockTradingProto";
 
 
 service  StockTradingService{
+  //UNARY RPC
   rpc getStockPrice(StockRequest) returns (StockResponse);
+
+  //SERVER STREAMING RPC
+  rpc subscribeStockPrice(StockRequest) returns (stream StockResponse);
+
+  //CLIENT STREAMING RPC
+  rpc bulkStockOrder(stream StockOrder) returns (OrderSummary);
+
+  // BIDIRECTIONAL STREAMING RPC
+  rpc liveStockTrading(stream StockOrder) returns (stream TradeStatus);
 }
 
 message  StockRequest {
@@ -17,4 +27,22 @@ message  StockResponse {
   string  stock_symbol = 1;
   double  price = 2;
   string  timestamp = 3;
+}
+message StockOrder {
+  string stock_symbol = 1;
+  int32  quantity = 2;
+  string order_type = 3;
+  double price = 4;
+  string order_id = 5;
+}
+message OrderSummary {
+  int32 total_orders = 1;
+  double total_amount = 2;
+  double success_count = 3;
+}
+message TradeStatus {
+  string order_id = 1;
+  string status = 2;//EXECUTED, FAILED, PENDING
+  string timestamp = 3;
+  string message = 4;
 }
